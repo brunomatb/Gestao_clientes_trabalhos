@@ -1,0 +1,80 @@
+create database gestao_clientes;
+use gestao_clientes;
+create table clientes(
+					  id_cliente int(11) primary key auto_increment,
+                      nome_cliente varchar(250) not null,
+                      email_cliente varchar(100) null,
+                      movel_cliente varchar(20) null,
+                      telefone_cliente varchar(20) null,
+                      morada_cliente varchar(300) null,
+                      cidade_cliente varchar(30)null,
+                      cliente_ativo tinyint not null default 1,
+                      data_criacao_cliente timestamp default current_timestamp not null,
+                      data_atualizacao_cliente timestamp default current_timestamp on update current_timestamp not null,
+                      data_eliminacao_cliente timestamp default null null
+					);
+                    
+create table colaborador(
+					     id_colaborador int(11) primary key not null auto_increment,
+                         nome_colaborador varchar(300) not null,
+                         email_colaborador varchar(100) null,
+                         morada_colaborador varchar(300) null,
+                         cidade_colaborador varchar(30)null,
+                         movel_colaborador varchar(20) null,
+                         telefone_cliente varchar(20) null,
+						 data_criacao_colaborador timestamp default current_timestamp not null,
+                         data_atualizacao_colaborador timestamp default current_timestamp on update current_timestamp not null,
+                         data_eliminacao_colaborador timestamp default null null
+						);
+create table trabalhos(
+					   id_trabalho int(11) auto_increment primary key not null,
+                       id_cliente int(11) not null,
+                       id_colaborador int(11) null,
+                       nome_trabalho varchar(250) not null,
+                       descricao_trabalho mediumtext null,
+                       morada_trabalho varchar(300) not null,
+                       estado_trabalho varchar(20) not null,
+                       motivo_pendencia varchar(500) null,
+                       data_criacao_trabalho timestamp default current_timestamp not null,
+                       data_atualizacao_trabalho timestamp default current_timestamp on update current_timestamp not null,
+                       data_eliminacao_trabalho timestamp default null null,
+                       foreign key (id_cliente) references clientes(id_cliente),
+                       foreign key (id_colaborador) references colaborador(id_colaborador)
+					   );
+create table users(
+					id_user int(11) primary key auto_increment,
+                    email varchar(250) not null,
+                    pass varchar(250) not null,
+                    nome varchar(250) not null,
+                    foto_user varchar(250) null,
+                    purl varchar(50) not null,
+                    ativo tinyint not null default 0,
+                    data_criacao_user datetime not null default current_timestamp(),
+					data_atualizacao_user datetime not null default current_timestamp() on update current_timestamp(),
+                    data_elimicacao_user datetime default null
+                    )
+
+//store procedures
+
+ use gestao_clientes;
+DELIMITER //
+CREATE procedure createNewClient(in _nome_cliente varchar(250), in _email_cliente varchar(250))
+BEGIN
+	INSERT INTO clientes (nome_cliente, email_cliente) values (_nome_cliente, _email_cliente);
+END //
+DELIMITER ;
+
+use gestao_clientes;
+DELIMITER //
+CREATE procedure deleteClient(in _id_cliente int(11))
+BEGIN
+	DELETE FROM clientes WHERE id_cliente = _id_cliente;
+END //
+DELIMITER ;
+use gestao_clientes;
+DELIMITER //
+CREATE procedure selectAllClients()
+BEGIN
+	SELECT * FROM clientes;
+END //
+DELIMITER ;

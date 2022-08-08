@@ -743,10 +743,19 @@ input {
 .div-client-details-edit input {
     outline: none;
     border: solid 2px #6bbaec;
-    background-color: #f2f2f2;
+    background-color: #f6f6f6;
     width: 100%;
     height: 40px;
 }
+.div-client-details-edit input:read-only, .div-client-details-edit textarea:read-only {
+    background-color: #e9ecef;
+    pointer-events: none;
+    touch-action: none;
+}
+.select-colaborador-edit:disabled{
+    background-color: #e9ecef;
+}
+
 
 .div-client-details-edit span {
     margin-top: 15px;

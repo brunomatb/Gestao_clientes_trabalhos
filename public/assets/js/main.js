@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
     updateUserDetails();
     updateUserPass();
     initiToolTip();
+    estadoEditWork();
 
 });
 
@@ -104,8 +105,39 @@ function inputOk(spanValidator, inputName) {
 
 //on keyup clean inputs//
 function onChangedInputs(input) {
-    alert('ola')
+
     inputOk(input.nextElementSibling.id, input);
+}
+function estadoEditWork() {
+    const select = document.querySelector('.select-estado-edit');
+    if (select) {
+
+        select.addEventListener('change', (e) => {
+            e.preventDefault();
+            estadoEditWorkValues(select);
+        })
+    }
+}
+function estadoEditWorkValues(select) {
+    let inputs = document.querySelector('#form_EditWork');
+    if (select.value === 'Fermé') {
+        for (let input of inputs) {
+            if (input.name !== 'estadoEditWork') {
+                document.getElementsByName(input.name)[0].readOnly = true;
+                if (input.name === 'colaboradorEditWork') {
+                    document.getElementsByName(input.name)[0].disabled = true;
+                }
+            
+            }
+        }
+    } else {
+        for (let input of inputs) {
+            document.getElementsByName(input.name)[0].readOnly = false;
+            if (input.name === 'colaboradorEditWork') {
+                document.getElementsByName(input.name)[0].disabled = false;
+            }
+        }
+    }
 }
 
 function verifyIntialDateIsEmpty(element) {
@@ -476,22 +508,22 @@ function tableClients(jsonResponse, tableId) {
             };
             break;
         case 'tableTrabalhos':
-            function colorBar(value){
+            function colorBar(value) {
                 debugger
                 let cor = "";
-                parseInt(value) < 50 ? cor ="": cor;
-                parseInt(value) > 49 && value < 100 ? cor ="bg-warning"  : cor;
+                parseInt(value) < 50 ? cor = "" : cor;
+                parseInt(value) > 49 && value < 100 ? cor = "bg-warning" : cor;
                 parseInt(value) === 100 ? cor = "bg-success" : cor;
                 return cor;
             }
 
-            function url(value){
+            function url(value) {
                 let href = "../public/index.php?a=client&id=";
                 parseInt(value) === 0 ? href = "../public/index.php?a=deleted_client&id=" : href;
                 return href;
             }
-           
-            function setColor(value){
+
+            function setColor(value) {
                 let color = "none"
                 debugger
                 parseInt(value) === 0 ? color = "rgb(222 70 70)" : color;
@@ -500,7 +532,7 @@ function tableClients(jsonResponse, tableId) {
             tableData = {
                 "clientes": [{
                     "data": "id_cliente", render: function (data, type, row, meta) {
-                        return "<a style='color:"+setColor(row.trabalho_ativo)+";' href='" + url(row.trabalho_ativo) + data + "' data-bs-toggle='tooltip' data-bs-html='true' title='Détails de l'utilisateur'><i class='fa-solid fa-address-card fa-2xl'></i></a>";
+                        return "<a style='color:" + setColor(row.trabalho_ativo) + ";' href='" + url(row.trabalho_ativo) + data + "' data-bs-toggle='tooltip' data-bs-html='true' title='Détails de l'utilisateur'><i class='fa-solid fa-address-card fa-2xl'></i></a>";
                     }
                 },
                 { "data": "nome_trabalho" },
@@ -508,14 +540,17 @@ function tableClients(jsonResponse, tableId) {
                 { "data": "morada_trabalho" },
                 { "data": "estado_trabalho" },
                 { "data": "colaborador" },
-                { "data": "percentagem_Inicio_FimTrabalho", render: function (data, type, row, meta) {
-                    return '<div class="progress"><div class="progress-bar '+colorBar(data)+' progress-bar-striped" style="width:'+data+'%">'+data+'%</div></div>';
-                }}]
+                {
+                    "data": "percentagem_Inicio_FimTrabalho", render: function (data, type, row, meta) {
+                        return '<div class="progress"><div class="progress-bar ' + colorBar(data) + ' progress-bar-striped" style="width:' + data + '%">' + data + '%</div></div>';
+                    }
+                }]
             };
             break;
     }
     tableId.dataTable({
         dom: 'Bfrtip',
+        processing: true,
         "responsive": true,
         'ColumnDefs': [{
             'targets': [0, 0],
@@ -943,7 +978,9 @@ function trabalhoTemplate(jsonResponse, divAppend) {
 }
 
 function getWork(input) {
+
     if (input) {
+
         let formData = new FormData();
         formData.append('accao', 'getWork');
         formData.append('id_trabalho', input.id);
@@ -1021,6 +1058,8 @@ function setWorkDetails(values) {
             optionColaborador = "<option selected>Il n'y a pas de collaborateurs, créez-en un première.</option>";
             select.innerHTML = optionColaborador;
         }
+        const select = document.querySelector('.select-estado-edit');
+        estadoEditWorkValues(select);
     }).catch((error) => {
         console.log(error);
     });
@@ -1090,7 +1129,7 @@ function updateWork() {
         pedido = fetch('../core/Request.php', {
             method: 'POST',
             body: formData
-        }).then((response) => {
+        }, colaboradorEditWork.disabled === true ? colaboradorEditWork.disabled === false : "").then((response) => {
             return response.json();
         }).then((jsonResponse) => {
             console.log(jsonResponse)

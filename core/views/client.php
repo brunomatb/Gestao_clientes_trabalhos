@@ -229,7 +229,7 @@
                         <input type="text" name="motivoPendenciaEditWork" onkeyup="onChangedInputs(this)" />
                         <span id="validatorMotivoPendenciaEditWork"></span>
                         <span class="span-details">* Travail attribué au salarié:</span>
-                        <select class="form-select select-colaborador-edit" name="colaboradorEditWork" aria-label="Default select example" onchange="onChangedInputs(this)">
+                        <select class="form-select select-colaborador-edit"  name="colaboradorEditWork" aria-label="Default select example" onchange="onChangedInputs(this)" tabindex="-1" aria-disabled="true">
                         </select>
                         <span id="validatorAtribuidoEditWork"></span>
                         <span class="span-details">Informations:</span>

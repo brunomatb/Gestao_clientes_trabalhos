@@ -59,7 +59,7 @@
             <a href="../public/index.php?a=trabalhos">
               <span>
                 <i class="fa-regular fa-file-lines"></i>
-              </span> Travaux</a>
+              </span> Chantiers</a>
           </li>
           <li>
             <a href="#">
@@ -101,7 +101,7 @@
                   <a class="nav-link" href="../public/index.php?a=clients">Clients</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="../public/index.php?a=trabalhos">Travaux</a>
+                  <a class="nav-link" href="../public/index.php?a=trabalhos">Chantiers</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="#">Employés</a>

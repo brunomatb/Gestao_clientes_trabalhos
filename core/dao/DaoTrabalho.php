@@ -48,11 +48,12 @@ class DaoTrabalho
 
     public function getAllworks(){
         $daoCrud = new DaoCrudModel();
-        $sql = "SELECT a.*, b.nome_colaborador, 
+        $sql = "SELECT a.*, b.nome_colaborador, nome_cliente, 
                 if(if(convert(datediff(CURRENT_TIMESTAMP(), a.data_estimada_inicio) / datediff(a.data_estimada_fim, a.data_estimada_inicio)*100, decimal) < 0 , 0, convert(datediff(CURRENT_TIMESTAMP(), a.data_estimada_inicio) / datediff(a.data_estimada_fim, a.data_estimada_inicio)*100, decimal)) > 100, 100,
                 if(convert(datediff(CURRENT_TIMESTAMP(), a.data_estimada_inicio) / datediff(a.data_estimada_fim, a.data_estimada_inicio)*100, decimal) < 0 , 0, convert(datediff(CURRENT_TIMESTAMP(), a.data_estimada_inicio) / datediff(a.data_estimada_fim, a.data_estimada_inicio)*100, decimal)))  as percentagem_Inicio_FimTrabalho
                 from gestao_clientes.trabalhos a
-                inner join gestao_clientes.colaborador b on a.id_colaborador = b.id_colaborador;";
+                inner join gestao_clientes.colaborador b on a.id_colaborador = b.id_colaborador
+                inner join gestao_clientes.clientes c on a.id_cliente = c.id_cliente ORDER BY c.nome_cliente;";
         $resultados =  $daoCrud->select(trim($sql));
         $trabalhos = [];
         if (count($resultados) > 0) {
@@ -74,6 +75,7 @@ class DaoTrabalho
                 $trabalhoModel->setDataElimicacaoTrabalho($v->data_eliminacao_trabalho);
                 $trabalhoModel->setNomeColaborador($v->nome_colaborador);
                 $trabalhoModel->setTrabalhoAtivo($v->trabalho_ativo);
+                $trabalhoModel->setNome($v->nome_cliente);
                 $trabalhos[] = $trabalhoModel;
             }
         }

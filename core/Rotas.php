@@ -8,7 +8,8 @@ $rotas = [
     'client' => 'cliente@getClient',
     'history_clients' => 'cliente@getHistoryClients',
     'deleted_client' =>'cliente@getDeletedClient',
-    'trabalhos' => 'trabalho@getWorks'
+    'trabalhos' => 'trabalho@getWorks',
+    'colaboradores' => 'colaborador@getColaboradores'
 ];
     //define a rota padrão//
 $acao = $rotas['inicio'];

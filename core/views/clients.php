@@ -8,11 +8,10 @@
         <tr>
             <th>Actions</th>
             <th>Nom</th>
-            <th>Mobile</th>
+            <th>Telephone</th>
             <th>E-mail</th>
             <th>Adresse</th>
             <th>Date de création</th>
-            <th>Date de mise à jour</th>
         </tr>
     </thead>
     <tbody>

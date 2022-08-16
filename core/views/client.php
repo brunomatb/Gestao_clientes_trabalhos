@@ -63,7 +63,7 @@
         </div>
         <div class="mt-3 div-btn-works">
             <div>
-                <a href="../public/index.php?a=clients" type="button" class="btn btn-secondary btn-sm me-3">Volver&nbsp;<i class="fa-solid fa-reply"></i></a>
+                <a href="../public/index.php?a=clients" type="button" class="btn btn-secondary btn-sm me-3">Retourner&nbsp;<i class="fa-solid fa-reply"></i></a>
             </div>
             <div>
                 <button id="btn_addNewWork" type="button" class="btn btn-primary btn-sm btn-changes" data-bs-toggle='modal' data-bs-target='#modal_createWork'>Nouveau chantier&nbsp;<i class="fa-solid fa-plus"></i></button>
@@ -199,7 +199,7 @@
                 <h4 style="color:#c05f13; font-weight: bold;" class="modal-title" id="staticBackdropLabel">Modifier chantiert&nbsp;<i class="fa-solid fa-file-lines"></i></h4>
             </div>
             <div class="modal-body">
-                <div class="div-client-details-edit">
+                <div class="div-client-details-edit" id="div_editWork">
                     <form id="form_EditWork">
                         <span class="span-details">* Brève description du chantier:</span>
                         <input type="text" name="descricaoEditWork" onkeyup="onChangedInputs(this)" />

@@ -127,7 +127,7 @@ function estadoEditWorkValues(select) {
                 if (input.name === 'colaboradorEditWork') {
                     document.getElementsByName(input.name)[0].disabled = true;
                 }
-            
+
             }
         }
     } else {
@@ -466,6 +466,41 @@ function getClients() {
     });
     return pedido;
 }
+
+getColaboradores().then((jsonResponse) => {
+    console.log(jsonResponse)
+    let div = "";
+    let divAppend = document.querySelector('.card-colaborador');
+
+    if (divAppend && jsonResponse.length !== 0) {
+        jsonResponse.forEach((v, k) => {
+            div += '<div class="col-md-3">';
+            div += '<div class="contact-box center-version">';
+            div += ' <a href="#profile.html">';
+            div += '<div class="div-user">';
+            div += '<span class="circle-colaborador" style="background: '+setRondomColors()+'">' + v.nome_colaborador[0] + (v.nome_colaborador.split(" ").length > 1 ? v.nome_colaborador.split(" ").pop()[0] : "") +'</span>';
+            div += '</div>';
+            div += '<h3 class="m-b-xs"><strong>' + v.nome_colaborador + '</strong></h3>';
+            div += '<div class="font-bold">Email: ' + v.email_colaborador + '</div>';
+            div += '<address class="m-t-md">';
+            div += 'Adresse: ' + v.morada_colaborador + '<br>';
+            div += '<abbr title="Phone">Phone: </abbr>' + v.movel_colaborador;
+            div += '</address>';
+            div += '</a>';
+            div += '<div class="contact-box-footer">';
+            div += '<div class="m-t-xs btn-group">';
+            div += '<a href="tel:+' + v.movel_colaborador + '"class="btn btn-xs btn-white"><i class="fa fa-phone"></i> Call </a>';
+            div += '<a href="mailto:' + v.email_colaborador + '" class="btn btn-xs btn-white"><i class="fa fa-envelope"></i> Email</a>';
+            div += '</div>';
+            div += '</div>';
+            div += '</div>';
+            div += '</div>';
+            divAppend.innerHTML = div;
+        });
+    }
+
+});
+
 function tableClients(jsonResponse, tableId) {
 
     if (!jsonResponse && !tableId) {
@@ -473,27 +508,47 @@ function tableClients(jsonResponse, tableId) {
     }
     var href = "";
     var tableData = [];
+    let btns = [
+        {
+            extend: 'copyHtml5',
+            text: '<span style="color:#d5a75e"><i class="fa-solid fa-copy fa-2xl"></i></span>',
+            titleAttr: 'Copy'
+        },
+        {
+            extend: 'excelHtml5',
+            text: '<span style="color:#007c01"><i class="fa-solid fa-file-excel fa-2xl"></i></span>',
+            titleAttr: 'Excel'
+        },
+        {
+            extend: 'pdfHtml5',
+            title: 'Export clients',
+            text: '<span style="color:#db0001"><i class="fa-solid fa-file-pdf fa-2xl"></i></span>',
+            titleAttr: 'PDF',
+            exportOptions: {
+                columns: [1, 2, 3, 4, 5, 6]
+            }
+        }
+    ];
     switch (tableId.attr('id')) {
         case 'tableClients':
             href = "../public/index.php?a=client&id=";
             tableData = {
-                "clientes": [{
+                "valores": [{
                     "data": "id_cliente", render: function (data, type, row, meta) {
-                        return "<a href='" + href + data + "' data-bs-toggle='tooltip' data-bs-html='true' title='Détails de l'utilisateur'><i class='fa-solid fa-address-card fa-2xl'></i></a>";
+                        return "<a href='" + href + data + "' data-bs-toggle='tooltip' data-bs-html='true' title='Détails de l'utilisateur'><i class='fa-solid fa-address-card fa-2xl'></i>&nbsp;<span style='color:green'><i class='fa-solid fa-circle-plus'></i></span></a>";
                     }
                 },
                 { "data": "nome_cliente" },
                 { "data": "movel_cliente" },
                 { "data": "email_cliente" },
                 { "data": "morada_cliente" },
-                { "data": "data_criacao_cliente" },
-                { "data": "data_atualizacao_cliente" }]
+                { "data": "data_criacao_cliente" }]
             };
             break;
         case 'tableHistoryClients':
             href = "../public/index.php?a=deleted_client&id=";
             tableData = {
-                "clientes": [
+                "valores": [
                     {
                         "data": "id_cliente", render: function (data, type, row, meta) {
                             return "<a href='" + href + data + "' data-bs-toggle='tooltip' style='color:rgb(222 70 70)' data-bs-html='true' title='Détails de l'utilisateur'><i class='fa-solid fa-address-card fa-2xl'></i></a>";
@@ -530,9 +585,9 @@ function tableClients(jsonResponse, tableId) {
                 return color;
             }
             tableData = {
-                "clientes": [{
+                "valores": [{
                     "data": "id_cliente", render: function (data, type, row, meta) {
-                        return "<a style='color:" + setColor(row.trabalho_ativo) + ";' href='" + url(row.trabalho_ativo) + data + "' data-bs-toggle='tooltip' data-bs-html='true' title='Détails de l'utilisateur'><i class='fa-solid fa-address-card fa-2xl'></i></a>";
+                        return "<a style='color:" + setColor(row.trabalho_ativo) + "; text-decoration: none;' href='" + url(row.trabalho_ativo) + data + "' data-bs-toggle='tooltip' data-bs-html='true' title='Détails de l'utilisateur'><i class='fa-solid fa-address-card fa-2xl'></i> " + row.nome_cliente + "</a>";
                     }
                 },
                 { "data": "nome_trabalho" },
@@ -547,7 +602,23 @@ function tableClients(jsonResponse, tableId) {
                 }]
             };
             break;
+        case 'tableColaboradores':
+            btns = [];
+            href = "../public/index.php?a=colaborador&id=";
+            tableData = {
+                "valores": [{
+                    "data": "nome_colaborador", render: function (data, type, row, meta) {
+                        return "<a href='" + href + row.id_colaborador + "' data-bs-toggle='tooltip' data-bs-html='true' title='Détails de l'utilisateur' class='colaboradores-link'><span style='color:#1476bf'><i class='fa-regular fa-circle-user me-2 fa-2xl'></i></span>" + data + "</a>";
+                    }
+                },
+                { "data": "email_colaborador" },
+                { "data": "telefone_colaborador" },
+                { "data": "morada_colaborador" },
+                { "data": "data_criacao_colaborador" }]
+            };
+            break;
     }
+
     tableId.dataTable({
         dom: 'Bfrtip',
         processing: true,
@@ -555,7 +626,6 @@ function tableClients(jsonResponse, tableId) {
         'ColumnDefs': [{
             'targets': [0, 0],
             'orderable': false,
-
         },
         { responsivePriority: 1, targets: 0 },
         { responsivePriority: 2, targets: 1 }
@@ -565,37 +635,11 @@ function tableClients(jsonResponse, tableId) {
         "language": {
             "url": "../public/assets/js/dt_fr-FR.json"
         },
-        "columns": tableData.clientes,
-        buttons: [
-            {
-                extend: 'copyHtml5',
-                text: '<span style="color:#d5a75e"><i class="fa-solid fa-copy fa-2xl"></i></span>',
-                titleAttr: 'Copy'
-            },
-            {
-                extend: 'excelHtml5',
-                text: '<span style="color:#007c01"><i class="fa-solid fa-file-excel fa-2xl"></i></span>',
-                titleAttr: 'Excel'
-            },
-            {
-                extend: 'csvHtml5',
-                text: '<span style="color:#44b058"><i class="fa-solid fa-file-csv fa-2xl"></i></span>',
-                titleAttr: 'CSV'
-            },
-            {
-                extend: 'pdfHtml5',
-                title: 'Export clients',
-                text: '<span style="color:#db0001"><i class="fa-solid fa-file-pdf fa-2xl"></i></span>',
-                titleAttr: 'PDF',
-                exportOptions: {
-                    columns: [1, 2, 3, 4, 5, 6]
-                }
-            }
-        ],
+        "columns": tableData.valores,
+        buttons: btns,
 
         destroy: true,
     });
-
 }
 function getHistoryClients() {
 
@@ -897,14 +941,65 @@ function getAllTrabalhosClient() {
     return pedido;
 }
 
+// delete client permanent //
+function deleteClient() {
+
+    let btnClick = document.querySelector('#btn_DeleteClient');
+    if (btnClick) {
+        btnClick.addEventListener('click', (e) => {
+            e.preventDefault();
+            debugger
+            const idcrypt = document.querySelector('.span-edit-cliente');
+            if (!idcrypt) {
+                return false;
+            }
+            let formData = new FormData();
+            formData.append('accao', 'deleteClient');
+            formData.append('id_cliente', idcrypt.id);
+            var pedido = fetch('../core/Request.php', {
+                method: 'POST',
+                body: formData
+            }).then((response) => {
+                return response.json();
+            }).then((jsonResponse) => {
+                const modal_ConfirmDeleteClient = document.querySelector('#modal_confirmDeleteClientP');
+                const modalConfirmDeleteClient = bootstrap.Modal.getInstance(modal_ConfirmDeleteClient);
+                modalConfirmDeleteClient.hide();
+                const modal_confirmCliente = document.querySelector('#modal_confirmCliente');
+                const modalconfirm2 = new bootstrap.Modal(modal_confirmCliente)
+                var spanBodyConfirmCliente = document.querySelector('#spanBodyConfirmCliente');
+                var titleModalConfirmCliente = document.querySelector('.title-modal-confirmCliente');
+                if (jsonResponse.status === "Cliente apagado") {
+                    getAllTrabalhosClient();
+                    titleModalConfirmCliente.innerHTML = 'Supprimé client <span style="color:green;"><i class="fa-solid fa-circle-check"></i></span>';
+                    spanBodyConfirmCliente.textContent = "Chantier supprimé avec succès.";
+                    modalconfirm2.show();
+                    let location = "index.php?a=history_clients";
+                    let btn = document.querySelector('#btn_modalConfirmClient');
+                    windowLocation(btn, location);
+                    return false;
+                }
+                if (jsonResponse.status === "Cliente nao apagado") {
+                    titleModalConfirmCliente.innerHTML = 'Supprimé client <span style="color:orange;"><i class="fa-solid fa-triangle-exclamation"></i></span>';
+                    spanBodyConfirmCliente.textContent = "Client modification apportée.";
+                    modalconfirm2.show();
+                }
+
+            }).catch((error) => {
+                console.log(error);
+            });
+            return pedido;
+        });
+    }
+}
+//////trabalhos /////
+
 function trabalhoTemplate(jsonResponse, divAppend) {
     console.log(jsonResponse)
     var div = "";
     var dateNow = new Date().toLocaleString("default", { day: "2-digit", month: "2-digit", year: "numeric" });
-    const colors = ['#3ccb22', '#226fcb', '#dbcc1a', '#c32d13', '#a613c3'];
     jsonResponse.forEach((v, k) => {
-        let colorsRandom = Math.floor(Math.random() * colors.length);
-        div += '<div class="div-works" style="border-left: solid 5px ' + colors[colorsRandom] + '">';
+        div += '<div class="div-works" style="border-left: solid 5px ' + setRondomColors() + '">';
         div += '<button class="accordion-button collapsed accord#a613c3ion-button-work" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne' + k + '" aria-expanded="false" aria-controls="collapseOne">';
         div += '<div class="nome-trabalho">';
         div += '<span>' + v.nome_trabalho + '</span>';
@@ -1008,7 +1103,9 @@ function getAllworks() {
     }).then((response) => {
         return response.json();
     }).then((jsonResponse) => {
+
         let tableId = $('#tableTrabalhos');
+
         tableClients(jsonResponse, tableId);
         console.log(jsonResponse)
     }).catch((error) => {
@@ -1160,7 +1257,6 @@ function updateWork() {
 
 }
 
-
 function createWork() {
 
     let btn = document.querySelector('#btn_confirmCreateWork');
@@ -1293,22 +1389,6 @@ function deleteWork() {
     });
 }
 
-///////colaborador///////
-
-function getColaboradores() {
-
-    let formData = new FormData();
-    formData.append('accao', 'getAllColaboradores');
-    var pedido = fetch('../core/Request.php', {
-        method: 'POST',
-        body: formData
-    }).then((response) => {
-        return response.json();
-    });
-    return pedido;
-
-}
-
 function appendColaboradores() {
     getColaboradores().then((jsonResponse) => {
         if (jsonResponse.length !== 0) {
@@ -1333,7 +1413,6 @@ function appendColaboradores() {
         console.log(error);
     });
 }
-
 
 function softDeleteClient() {
     let btnConfirm = document.querySelector('#btn_softDeleteClient');
@@ -1428,57 +1507,17 @@ function windowLocation(btn, location) {
 
 }
 
-// delete client permanent //
-function deleteClient() {
+///////colaborador///////
+function getColaboradores() {
 
-    let btnClick = document.querySelector('#btn_DeleteClient');
-    if (btnClick) {
-        btnClick.addEventListener('click', (e) => {
-            e.preventDefault();
-            debugger
-            const idcrypt = document.querySelector('.span-edit-cliente');
-            if (!idcrypt) {
-                return false;
-            }
-            let formData = new FormData();
-            formData.append('accao', 'deleteClient');
-            formData.append('id_cliente', idcrypt.id);
-            var pedido = fetch('../core/Request.php', {
-                method: 'POST',
-                body: formData
-            }).then((response) => {
-                return response.json();
-            }).then((jsonResponse) => {
-                const modal_ConfirmDeleteClient = document.querySelector('#modal_confirmDeleteClientP');
-                const modalConfirmDeleteClient = bootstrap.Modal.getInstance(modal_ConfirmDeleteClient);
-                modalConfirmDeleteClient.hide();
-                const modal_confirmCliente = document.querySelector('#modal_confirmCliente');
-                const modalconfirm2 = new bootstrap.Modal(modal_confirmCliente)
-                var spanBodyConfirmCliente = document.querySelector('#spanBodyConfirmCliente');
-                var titleModalConfirmCliente = document.querySelector('.title-modal-confirmCliente');
-                if (jsonResponse.status === "Cliente apagado") {
-                    getAllTrabalhosClient();
-                    titleModalConfirmCliente.innerHTML = 'Supprimé client <span style="color:green;"><i class="fa-solid fa-circle-check"></i></span>';
-                    spanBodyConfirmCliente.textContent = "Chantier supprimé avec succès.";
-                    modalconfirm2.show();
-                    let location = "index.php?a=history_clients";
-                    let btn = document.querySelector('#btn_modalConfirmClient');
-                    windowLocation(btn, location);
-                    return false;
-                }
-                if (jsonResponse.status === "Cliente nao apagado") {
-                    titleModalConfirmCliente.innerHTML = 'Supprimé client <span style="color:orange;"><i class="fa-solid fa-triangle-exclamation"></i></span>';
-                    spanBodyConfirmCliente.textContent = "Client modification apportée.";
-                    modalconfirm2.show();
-                }
+    let formData = new FormData();
+    formData.append('accao', 'getAllColaboradores');
+    var pedido = fetch('../core/Request.php', {
+        method: 'POST',
+        body: formData
+    }).then((response) => {
+        return response.json();
+    });
+    return pedido;
 
-            }).catch((error) => {
-                console.log(error);
-            });
-            return pedido;
-        });
-    }
 }
-
-
-

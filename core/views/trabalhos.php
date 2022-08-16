@@ -1,13 +1,12 @@
 <div class="add-new-client">
     <h3><b style="padding: 10px;"><i class="fa-solid fa-address-card"></i>&nbsp;Chantiers</b></h3>
 </div>
-
 <table class="display responsive" id="tableTrabalhos" style="width:100%">
     <thead>
         <tr>
-            <th>Client</th>
+            <th>Clients</th>
             <th>Chantiers</th>
-            <th>Description du chantier</th>
+            <th>Informations</th>
             <th>Adresse</th>
             <th>Statut</th>
             <th>Salarié</th>
@@ -16,4 +15,5 @@
     </thead>
     <tbody>
     </tbody>
+    
 </table>

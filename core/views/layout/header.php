@@ -18,6 +18,7 @@
   <script src="../public/assets/js/buttons.html5.min.js"></script>
   <script src="../public/assets/js/buttons.print.min.js"></script>
   <script src="../public/assets/js/main.js"></script>
+  <script src="../public/assets/js/func.js"></script>
   <link rel="stylesheet" href="../public/assets/css/jquery.datetimepicker.min.css" />
   <link rel="stylesheet" href="../public/assets/css/bootstrap.min.css" />
   <link rel="stylesheet" href="../public/assets/css/fontawesome_all.min.css" />
@@ -40,7 +41,7 @@
           <li classsidebar="active">
             <a href="../public/index.php">
               <span>
-                  <i class="fa-solid fa-house-chimney"></i>
+                <i class="fa-solid fa-house-chimney"></i>
               </span> Domicile</a>
           </li>
           <li classsidebar="active">
@@ -62,7 +63,7 @@
               </span> Chantiers</a>
           </li>
           <li>
-            <a href="#">
+            <a href="../public/index.php?a=colaboradores">
               <span>
                 <i class="fa-solid fa-people-group"></i>
               </span> Employés</a>
@@ -73,7 +74,6 @@
                 <i class="fa-solid fa-trash-can"></i>
               </span> Clients éliminés</a>
           </li>
-
         </ul>
 
         <div class="footer">
@@ -104,7 +104,7 @@
                   <a class="nav-link" href="../public/index.php?a=trabalhos">Chantiers</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Employés</a>
+                  <a class="nav-link" href="../public/index.php?a=colaboradores">Employés</a>
                 </li>
               </ul>
 

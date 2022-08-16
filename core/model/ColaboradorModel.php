@@ -1,7 +1,7 @@
 <?php
 namespace core\model;
 
-class ColaboradorModel
+class ColaboradorModel extends ClientModel
 {
     private $idColaborador;
     private $nomeColaborador;

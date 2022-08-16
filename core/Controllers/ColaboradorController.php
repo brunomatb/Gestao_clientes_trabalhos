@@ -9,6 +9,19 @@ use core\model\Functions;
 
 class ColaboradorController
 {
+    public function getColaboradores()
+    {
+        
+        if (!Functions::sessaoIniciada()) {
+            Functions::redirecionar("index.php");
+            return;
+        }
+
+        $valores = [
+            'sessaoIniciada' => Functions::sessaoIniciada(),
+        ];
+        Functions::layout(["header", "../colaboradores", "footer"], $valores);
+    }
     public function getAllColaboradores()
     {
         if (!Functions::sessaoIniciada()) {

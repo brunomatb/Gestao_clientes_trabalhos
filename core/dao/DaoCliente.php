@@ -13,7 +13,7 @@ class DaoCliente
     {
         $daoCrud = new DaoCrudModel();
         $parametros = [':cliente_ativo' => 1];
-        $resultados =  $daoCrud->select("SELECT * FROM clientes WHERE cliente_ativo = :cliente_ativo", $parametros);
+        $resultados =  $daoCrud->select("SELECT * FROM clientes WHERE cliente_ativo = :cliente_ativo order by nome_cliente", $parametros);
 
         $cliente = [];
         foreach ($resultados as $v) {

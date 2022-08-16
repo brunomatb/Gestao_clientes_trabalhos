@@ -57,7 +57,8 @@ class TrabalhoController
                 'data_atualizacao_trabalho' => $v->getDataAtualizacaoTrabalho(),
                 'data_eliminacao_trabalho' => $v->getDataElimicacaoTrabalho(),
                 'colaborador' => $v->getNomeColaborador(),
-                'trabalho_ativo' => $v->getTrabalhoAtivo()
+                'trabalho_ativo' => $v->getTrabalhoAtivo(),
+                'nome_cliente' => $v->getNome()
             ];
             $trabalhos[] = $trabalho;
         }

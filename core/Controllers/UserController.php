@@ -4,6 +4,7 @@ namespace core\Controllers;
 
 use core\dao\DaoUser;
 use core\model\Functions;
+use core\model\SendEmail;
 use core\model\UserModel;
 
 class UserController
@@ -87,7 +88,6 @@ class UserController
 
         echo json_encode(['status' => 'alteracao efetuada']);
         session_destroy();
-        
     }
     public function updateUserPass()
     {
@@ -123,11 +123,11 @@ class UserController
         if (!password_verify($_POST['passAtualUserUpdate'], $resultado[1]->pass)) {
             echo json_encode(['status' => 'Pass atual errada']);
             return;
-        } 
+        }
         if (password_verify($_POST['passUserUpdate'], $resultado[1]->pass)) {
             echo json_encode(['status' => 'Pass atual e nova iguais']);
             return;
-        } 
+        }
         $UserModel2 = new UserModel();
         $UserModel2->setEmail($_SESSION['user']->email);
         $UserModel2->setIdUuser($_SESSION['user']->id_user);
@@ -139,5 +139,58 @@ class UserController
         }
         echo json_encode(['status' => 'Alteracao efetuada']);
         session_destroy();
+    }
+
+    public function setLogout()
+    {
+        if (!Functions::sessaoIniciada()) {
+            echo json_encode(['session' => false]);
+            return;
+        }
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            session_destroy();
+            return;
+        }
+        session_destroy();
+    }
+
+    public function sendEmailRecoveryPass()
+    {
+        if (Functions::sessaoIniciada()) {
+            echo json_encode(['session' => true]);
+            return;
+        }
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            return;
+        }
+        if(!isset($_POST['emailRecovey']) && strlen(trim($_POST['emailRecovey'])) == 0){
+            return;
+        }
+        if (!filter_var($_POST['emailRecovey'], FILTER_VALIDATE_EMAIL)) {
+            return;
+        }
+        $UserModel = new UserModel();
+        $daoUser = new DaoUser();
+        $UserModel->setEmail(filter_input(INPUT_POST, 'emailRecovey', FILTER_SANITIZE_FULL_SPECIAL_CHARS));
+        $resultado = $daoUser->getUserDetails($UserModel);
+        if($resultado[0]['statusResponse']!==1){
+            echo json_encode(['status'=>'Mail nao existe']);
+            return;
+        }
+        $sendEmail = new SendEmail();
+        $UserModel->setNome($resultado[1]->nome);
+        $UserModel->setIdUuser($resultado[1]->id_user);
+        $UserModel->setPurl(Functions::pearl());
+        //$resultadoSendEmail = $sendEmail->sendEmail($UserModel);
+        //if($resultadoSendEmail !== 1){
+        //    echo json_encode(['status'=>$resultadoSendEmail]);
+        //    return;
+        // }
+        $daoUser->updatePurlUser($UserModel);
+        echo json_encode(['status'=>'Mail enviado']);
+
+    }
+    public function passRecover(){
+        echo 'aqui';
     }
 }

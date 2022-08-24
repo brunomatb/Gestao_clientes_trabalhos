@@ -1,22 +1,27 @@
 $(document).ready(function () {
     var fullHeight = function () {
-        $('.js-fullheight').css('height', $(window).height());
-        $(window).resize(function () {
+        return $(window).resize(function () {
             $('.js-fullheight').css('height', $(window).height());
         });
     };
     fullHeight();
+    console.log(fullHeight().innerWidth());
 
+    if (fullHeight().innerWidth() < 991.98) {
+        debugger
+        document.querySelector('#sidebar').classList.remove('active');
+        document.querySelector('#content').classList.add('active_content');
+    }
     $('#sidebarCollapse').on('click', function () {
         $('#sidebar').toggleClass('active');
         $('#content').toggleClass('active_content');
     });
+
     $.datetimepicker.setLocale('fr');
     dataInicio();
     moment().format();
     dataInicioEditWork();
     dataFimEditWork();
-
 });
 
 
@@ -159,8 +164,6 @@ function userLogin() {
 
         btn.addEventListener('click', function (e) {
             e.preventDefault();
-
-            let textEmailregex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
             let emailLogin = document.querySelector("input[name=emailLogin]");
             let passLogin = document.querySelector("input[name=passLogin]");
             if (emailLogin.value.trim() === "") {
@@ -169,7 +172,7 @@ function userLogin() {
                 incorrectInput(email_validator.id, emailLogin)
                 return false;
             }
-            if (!textEmailregex.test(emailLogin.value)) {
+            if (!testEmailRegex(emailLogin.value)) {
                 let email_validator = document.querySelector("#email_validator");
                 email_validator.textContent = "Entrer un email valide";
                 incorrectInput(email_validator.id, emailLogin)
@@ -255,9 +258,8 @@ function updateUserDetails() {
 
                 return false;
             }
-            let textEmailregex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
             let email = document.querySelector('input[name=emailUserUpdate]');
-            if (!textEmailregex.test(email.value)) {
+            if (!testEmailRegex(email.value)) {
                 let email_UpdateValidator = document.querySelector("#email_UpdateValidator");
                 email_UpdateValidator.textContent = "Entrer un email valide";
                 modal.hide();
@@ -442,6 +444,11 @@ document.addEventListener('DOMContentLoaded', function () {
     deleteWork();
     recoveryClient();
     getAllworks();
+    createColaborador();
+    updateColaborador();
+    setColaboradores();
+    logout();
+    sendEmail();
 
 });
 
@@ -467,39 +474,7 @@ function getClients() {
     return pedido;
 }
 
-getColaboradores().then((jsonResponse) => {
-    console.log(jsonResponse)
-    let div = "";
-    let divAppend = document.querySelector('.card-colaborador');
 
-    if (divAppend && jsonResponse.length !== 0) {
-        jsonResponse.forEach((v, k) => {
-            div += '<div class="col-md-3">';
-            div += '<div class="contact-box center-version">';
-            div += ' <a href="#profile.html">';
-            div += '<div class="div-user">';
-            div += '<span class="circle-colaborador" style="background: '+setRondomColors()+'">' + v.nome_colaborador[0] + (v.nome_colaborador.split(" ").length > 1 ? v.nome_colaborador.split(" ").pop()[0] : "") +'</span>';
-            div += '</div>';
-            div += '<h3 class="m-b-xs"><strong>' + v.nome_colaborador + '</strong></h3>';
-            div += '<div class="font-bold">Email: ' + v.email_colaborador + '</div>';
-            div += '<address class="m-t-md">';
-            div += 'Adresse: ' + v.morada_colaborador + '<br>';
-            div += '<abbr title="Phone">Phone: </abbr>' + v.movel_colaborador;
-            div += '</address>';
-            div += '</a>';
-            div += '<div class="contact-box-footer">';
-            div += '<div class="m-t-xs btn-group">';
-            div += '<a href="tel:+' + v.movel_colaborador + '"class="btn btn-xs btn-white"><i class="fa fa-phone"></i> Call </a>';
-            div += '<a href="mailto:' + v.email_colaborador + '" class="btn btn-xs btn-white"><i class="fa fa-envelope"></i> Email</a>';
-            div += '</div>';
-            div += '</div>';
-            div += '</div>';
-            div += '</div>';
-            divAppend.innerHTML = div;
-        });
-    }
-
-});
 
 function tableClients(jsonResponse, tableId) {
 
@@ -525,7 +500,7 @@ function tableClients(jsonResponse, tableId) {
             text: '<span style="color:#db0001"><i class="fa-solid fa-file-pdf fa-2xl"></i></span>',
             titleAttr: 'PDF',
             exportOptions: {
-                columns: [1, 2, 3, 4, 5, 6]
+                columns: [1, 2, 3, 4, 5]
             }
         }
     ];
@@ -591,30 +566,19 @@ function tableClients(jsonResponse, tableId) {
                     }
                 },
                 { "data": "nome_trabalho" },
-                { "data": "descricao_trabalho" },
                 { "data": "morada_trabalho" },
-                { "data": "estado_trabalho" },
+                {
+                    "data": "estado_trabalho", render: function (data, type, row, meta) {
+                        debugger
+                        return "<span style='color:" + setColorEstadoTrabalho(data) + "; font-weight: bolder;'>" + data + "</span>";
+                    }
+                },
                 { "data": "colaborador" },
                 {
                     "data": "percentagem_Inicio_FimTrabalho", render: function (data, type, row, meta) {
                         return '<div class="progress"><div class="progress-bar ' + colorBar(data) + ' progress-bar-striped" style="width:' + data + '%">' + data + '%</div></div>';
                     }
                 }]
-            };
-            break;
-        case 'tableColaboradores':
-            btns = [];
-            href = "../public/index.php?a=colaborador&id=";
-            tableData = {
-                "valores": [{
-                    "data": "nome_colaborador", render: function (data, type, row, meta) {
-                        return "<a href='" + href + row.id_colaborador + "' data-bs-toggle='tooltip' data-bs-html='true' title='Détails de l'utilisateur' class='colaboradores-link'><span style='color:#1476bf'><i class='fa-regular fa-circle-user me-2 fa-2xl'></i></span>" + data + "</a>";
-                    }
-                },
-                { "data": "email_colaborador" },
-                { "data": "telefone_colaborador" },
-                { "data": "morada_colaborador" },
-                { "data": "data_criacao_colaborador" }]
             };
             break;
     }
@@ -724,12 +688,8 @@ function valuesClient(jsonResponse, inputs) {
 }
 /////update cliente/////////
 function validateUpdateCliente() {
-
     const btnSubmit = document.querySelector('#btn_confirmUpdatdeClient');
-
-
     if (btnSubmit) {
-
         btnSubmit.addEventListener('click', function (e) {
             var myModalUpdateUser = document.querySelector('#modal_EditClient');
             var modal = bootstrap.Modal.getInstance(myModalUpdateUser);
@@ -744,12 +704,10 @@ function validateUpdateCliente() {
                 let validatorNomeClienteUpdate = document.querySelector("#validatorNomeClienteUpdate");
                 validatorNomeClienteUpdate.textContent = "Le nom est requis."
                 incorrectInput(validatorNomeClienteUpdate.id, nome)
-
                 return false;
             }
             let emailCliente = document.querySelector("input[name=emailClienteUpdate]");
-            let textEmailregex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-            if (!textEmailregex.test(emailCliente.value) && emailCliente.value !== "") {
+            if (!testEmailRegex(emailCliente.value) && emailCliente.value !== "") {
                 let validatorEmailClienteUpdate = document.querySelector("#validatorEmailClienteUpdate");
                 validatorEmailClienteUpdate.textContent = "Entrer un email valide.";
                 incorrectInput(validatorEmailClienteUpdate.id, emailCliente)
@@ -848,8 +806,7 @@ function validateNewCliente() {
                 return false;
             }
             let emailCliente = document.querySelector("input[name=emailNewCliente]");
-            let textEmailregex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-            if (!textEmailregex.test(emailCliente.value) && emailCliente.value !== "") {
+            if (!testEmailRegex(emailCliente.value) && emailCliente.value !== "") {
                 let validatorEmailNewCliente = document.querySelector("#validatorEmailNewCliente");
                 validatorEmailNewCliente.textContent = "Entrer un email valide.";
                 incorrectInput(validatorEmailNewCliente.id, emailCliente)
@@ -901,7 +858,7 @@ function validateNewCliente() {
                 if (jsonResponse.status === "Erro na criacao") {
                     spanIcon.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
                     spanText.textContent = 'Erreur lors de la création du client, réessayez plus tard';
-                    spanIcon.style.color = "red"; destroy();
+                    spanIcon.style.color = "red";
                     modal_createClientConfirm.show();
                 }
             }).catch((error) => {
@@ -1343,9 +1300,7 @@ function createWork() {
     });
 }
 
-function setModal(input) {
-    document.querySelector('.span-information-delete-work').setAttribute('id', input.previousElementSibling.id);
-}
+
 
 function deleteWork() {
     let btn = document.querySelector('#btn_deleteWork');
@@ -1396,6 +1351,7 @@ function appendColaboradores() {
             if (!select) {
                 return false;
             }
+            debugger
             let option = "";
             option += '<option selected>Travail atrribuè au salarié</option>';
             jsonResponse.forEach((v, k) => {
@@ -1498,14 +1454,6 @@ function recoveryClient() {
     }
 }
 
-function windowLocation(btn, location) {
-    if (btn) {
-        btn.addEventListener('click', function () {
-            window.location.href = location;
-        });
-    }
-
-}
 
 ///////colaborador///////
 function getColaboradores() {
@@ -1520,4 +1468,346 @@ function getColaboradores() {
     });
     return pedido;
 
+}
+function setColaboradores() {
+    getColaboradores().then((jsonResponse) => {
+        console.log(jsonResponse)
+        let div = "";
+        let divAppend = document.querySelector('.card-colaborador');
+
+        if (divAppend && jsonResponse.length !== 0) {
+            jsonResponse.forEach((v, k) => {
+                div += '<div class="col-md-6 col-lg-4 col-xl-3">';
+                div += '<div class="contact-box center-version">';
+                div += '<div class="dropdown dropdown-opcoes-colaborador">';
+                div += '<span class="botao-dropdown-opcoes-colaborador" type="button" data-bs-toggle="dropdown" aria-expanded="false">';
+                div += '<i class="fa-solid fa-angle-down fa-2xl"></i>';
+                div += '</span>';
+                div += '<ul class="dropdown-menu">';
+                div += '<li>';
+                div += '<span id="' + v.id_colaborador + '" data-bs-toggle="modal" data-bs-target="#modal_editColaborador" onclick="getColaborador(this)" class="dropdown-item span-edit-colaborador"><span style="color:#093f95"><i class="fa-solid fa-user-pen"></i></span>&nbsp;Modifier employé</span>';
+                div += '</li>';
+                div += '<li>';
+                div += '<hr class="dropdown-divider">';
+                div += '</li>';
+                div += '<li>';
+                div += '<span class="dropdown-item delete-colaborador" id="btn_deleteColaborador" data-bs-toggle="modal" data-bs-target="#modal_confirmDeleteColaborador" onclick="setModal(this)"><span style="color: rgb(214 55 55);"><i class="fa-solid fa-user-xmark"></i></span>&nbsp;Supprimer employé</span>';
+                div += '</li>';
+                div += '</ul>';
+                div += '</div>';
+                div += '<a href="#profile.html">';
+                div += '<span class="circle-colaborador" style="background: ' + setRondomColors() + '">' + v.nome_colaborador[0] + (v.nome_colaborador.split(" ").length > 1 ? v.nome_colaborador.split(" ").pop()[0] : "") + '</span>';
+                div += '<h3 class="m-b-xs"><strong>' + v.nome_colaborador + '</strong></h3>';
+                div += '<div class="font-bold">Email: ' + v.email_colaborador + '</div>';
+                div += '<address class="m-t-md">';
+                div += 'Adresse: ' + v.morada_colaborador + '<br>';
+                div += '<abbr title="Phone">Phone: </abbr>' + v.movel_colaborador;
+                div += '</address>';
+                div += '</a>';
+                div += '<div class="contact-box-footer">';
+                div += '<div class="m-t-xs btn-group">';
+                div += '<a href="tel:+' + v.movel_colaborador + '"class="btn btn-xs btn-white"><i class="fa fa-phone"></i> Call </a>';
+                div += '<a href="mailto:' + v.email_colaborador + '" class="btn btn-xs btn-white"><i class="fa fa-envelope"></i> Email</a>';
+                div += '</div>';
+                div += '</div>';
+                div += '</div>';
+                div += '</div>';
+                divAppend.innerHTML = div;
+            });
+        }
+
+    });
+}
+function getColaborador(input) {
+
+    let nomeColaboradorUpdate = document.querySelector('input[name=nomeColaboradorUpdate]');
+    let moradaColaboradorUpdate = document.querySelector('input[name=moradaColaboradorUpdate]');
+    let cidadeColaboradorUpdate = document.querySelector('input[name=cidadeColaboradorUpdate]');
+    let emailColaboradorUpdate = document.querySelector('input[name=emailColaboradorUpdate]');
+    let movelColaboradorUpdate = document.querySelector('input[name=movelColaboradorUpdate]');
+    let telefoneColaboradorUpdate = document.querySelector('input[name=telefoneColaboradorUpdate]');
+    let inputsArray = [];
+    inputsArray.push(nomeColaboradorUpdate, moradaColaboradorUpdate, cidadeColaboradorUpdate, emailColaboradorUpdate, movelColaboradorUpdate, telefoneColaboradorUpdate);
+    for (let input of inputsArray) {
+        input.value = "";
+    }
+
+    let formData = new FormData();
+    formData.append('accao', 'getColaborador');
+    formData.append('id_colaborador', input.id);
+    fetch('../core/Request.php', {
+        method: 'POST',
+        body: formData
+    }).then((response) => {
+        return response.json();
+    }).then((jsonResponse) => {
+
+        nomeColaboradorUpdate.value = jsonResponse.nome_colaborador;
+        moradaColaboradorUpdate.value = jsonResponse.morada_colaborador;
+        cidadeColaboradorUpdate.value = jsonResponse.cidade_colaborador;
+        emailColaboradorUpdate.value = jsonResponse.email_colaborador;
+        movelColaboradorUpdate.value = jsonResponse.movel_colaborador;
+        telefoneColaboradorUpdate.value = jsonResponse.telefone_colaborador;
+        nomeColaboradorUpdate.setAttribute('id', jsonResponse.id_colaborador);
+    }).catch((error) => {
+        console.log(error);
+    });
+}
+
+function createColaborador() {
+    const btn_CreateColaborador = document.querySelector('#btn_CreateColaborador');
+
+    if (btn_CreateColaborador) {
+
+        btn_CreateColaborador.addEventListener('click', function (e) {
+            e.preventDefault();
+            var modal1 = document.querySelector('#modal_creatNewColaborador');
+            var modal_creatNewColaborador = bootstrap.Modal.getInstance(modal1);
+            const nome = document.querySelector('input[name=nomeNewColaborador]');
+            if (nome.value.trim() === "") {
+
+                let validatorNomeNewColaborador = document.querySelector("#validatorNomeNewColaborador");
+                validatorNomeNewColaborador.textContent = "Le nom est requis.";
+                incorrectInput(validatorNomeNewColaborador.id, nome)
+                return false;
+            }
+            let emailColaborador = document.querySelector("input[name=emailNewColaborador]");
+            if (!testEmailRegex(emailColaborador.value) && emailColaborador.value !== "") {
+                let validatorEmailNewColaborador = document.querySelector("#validatorEmailNewColaborador");
+                validatorEmailNewColaborador.textContent = "Entrer un email valide.";
+                incorrectInput(validatorEmailNewColaborador.id, emailColaborador)
+                return false;
+            }
+            const movel = document.querySelector('input[name=movelNewColaborador]');
+            const testNumberRegex = /^[0-9]*$/;
+
+            if (!testNumberRegex.test(movel.value)) {
+                let validatorMovelNewColaborador = document.querySelector("#validatorMovelNewColaborador");
+                validatorMovelNewColaborador.textContent = "Entrez un numéro de mobile valide."
+                incorrectInput(validatorMovelNewColaborador.id, movel);
+                return false;
+            }
+            const telefone = document.querySelector('input[name=telefoneNewColaborador]');
+            if (!testNumberRegex.test(telefone.value)) {
+                let validatorTelefoneNewColaborador = document.querySelector("#validatorTelefoneNewColaborador");
+                validatorTelefoneNewColaborador.textContent = "Entrez un numéro de téléphone valide"
+                incorrectInput(validatorTelefoneNewColaborador.id, telefone);
+                return false;
+            }
+            const morada = document.querySelector('input[name=moradaNewColaborador]');
+
+            let formData = new FormData(document.querySelector('#form_createColaborador'));
+            formData.append('accao', 'createColaborador');
+            fetch('../core/Request.php', {
+                method: 'POST',
+                body: formData
+            }).then((response) => {
+                return response.json();
+            }).then((jsonResponse) => {
+                modal_creatNewColaborador.hide();
+                var modal2 = document.querySelector('#modal_createColaboradorConfirm');
+                var modal_createColaboradorConfirm = new bootstrap.Modal(modal2)
+                var spanIcon = document.querySelector('.span-create-colaborador-confirm-icon');
+                var spanText = document.querySelector('#spanCreateColaborador');
+                if (jsonResponse.status === "Colaborador criado") {
+                    spanIcon.innerHTML = '<i class="fa-regular fa-circle-check"></i>';
+                    spanText.textContent = 'Employé créé avec succès';
+                    spanIcon.style.color = "green";
+                    setColaboradores();
+                    modal_createColaboradorConfirm.show();
+                }
+                if (jsonResponse.status === "Erro na criacao") {
+                    spanIcon.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
+                    spanText.textContent = 'Erreur lors de la création du employé, réessayez plus tard';
+                    spanIcon.style.color = "red";
+                    modal_createColaboradorConfirm.show();
+                }
+            }).catch((error) => {
+                console.log(error);
+            });
+
+        });
+    }
+}
+
+function updateColaborador() {
+    const btn_CreateColaborador = document.querySelector('#btn_updateColaborador');
+
+    if (btn_CreateColaborador) {
+
+        btn_CreateColaborador.addEventListener('click', function (e) {
+            e.preventDefault();
+            var modal1 = document.querySelector('#modal_editColaborador');
+            var modal_creatNewColaborador = bootstrap.Modal.getInstance(modal1);
+            const nome = document.querySelector('input[name=nomeColaboradorUpdate]');
+            if (nome.value.trim() === "") {
+
+                let validatorNomeNewColaborador = document.querySelector("#validatorNomeColaboradorUpdate");
+                validatorNomeNewColaborador.textContent = "Le nom est requis.";
+                incorrectInput(validatorNomeNewColaborador.id, nome)
+                return false;
+            }
+            let emailColaborador = document.querySelector("input[name=emailColaboradorUpdate]");
+            if (!testEmailRegex(emailColaborador.value) && emailColaborador.value !== "") {
+                let validatorEmailNewColaborador = document.querySelector("#validatorEmailColaboradorUpdate");
+                validatorEmailNewColaborador.textContent = "Entrer un email valide.";
+                incorrectInput(validatorEmailNewColaborador.id, emailColaborador)
+                return false;
+            }
+            const movel = document.querySelector('input[name=movelColaboradorUpdate]');
+            const testNumberRegex = /^[0-9]*$/;
+
+            if (!testNumberRegex.test(movel.value)) {
+                let validatorMovelNewColaborador = document.querySelector("#validatorMovelColaboradorUpdate");
+                validatorMovelNewColaborador.textContent = "Entrez un numéro de mobile valide."
+                incorrectInput(validatorMovelNewColaborador.id, movel);
+                return false;
+            }
+            const telefone = document.querySelector('input[name=telefoneColaboradorUpdate]');
+            if (!testNumberRegex.test(telefone.value)) {
+                let validatorTelefoneNewColaborador = document.querySelector("#validatorTelefoneColaboradorUpdate");
+                validatorTelefoneNewColaborador.textContent = "Entrez un numéro de téléphone valide"
+                incorrectInput(validatorTelefoneNewColaborador.id, telefone);
+                return false;
+            }
+            const morada = document.querySelector('input[name=moradaColaboradorUpdate]');
+
+            let formData = new FormData(document.querySelector('#form_colaboradorpdate'));
+            formData.append('accao', 'updateColaborador');
+            formData.append('id_colaborador', nome.id);
+            fetch('../core/Request.php', {
+                method: 'POST',
+                body: formData
+            }).then((response) => {
+                return response.json();
+            }).then((jsonResponse) => {
+                console.log(jsonResponse)
+                modal_creatNewColaborador.hide();
+                var modal2 = document.querySelector('#modal_createColaboradorConfirm');
+                var modal_createColaboradorConfirm = new bootstrap.Modal(modal2)
+                var spanIcon = document.querySelector('.span-create-colaborador-confirm-icon');
+                var spanText = document.querySelector('#spanCreateColaborador');
+                if (jsonResponse.status === "Colaborador atualizado") {
+                    spanIcon.innerHTML = '<i class="fa-regular fa-circle-check"></i>';
+                    spanText.textContent = 'Employé modifié avec succès';
+                    spanIcon.style.color = "green";
+                    setColaboradores();
+                    modal_createColaboradorConfirm.show();
+                }
+                if (jsonResponse.status === "Colaborador nao atualizado") {
+                    spanIcon.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
+                    spanText.textContent = 'Erreur lors de la modifié du employé, réessayez plus tard';
+                    spanIcon.style.color = "red";
+                    modal_createColaboradorConfirm.show();
+                }
+            }).catch((error) => {
+                console.log(error);
+            });
+
+        });
+    }
+}
+
+function deleteColaborador(input) {
+    let btn = input;
+
+    if (!btn) {
+        return false;
+    }
+    let formData = new FormData();
+    formData.append('id_colaborador', document.querySelector('.span-information-delete-colaborador').id);
+    formData.append('accao', 'deleteColaborador');
+    fetch('../core/Request.php', {
+        method: 'POST',
+        body: formData
+    }).then((response) => {
+        return response.json();
+    }).then((jsonResponse) => {
+        console.log(jsonResponse)
+        const modal_confirmDeleteColaborador = document.querySelector('#modal_confirmDeleteColaborador');
+        const modalConfirmDeleteColaborador = bootstrap.Modal.getInstance(modal_confirmDeleteColaborador);
+        modalConfirmDeleteColaborador.hide();
+        const modal_createColaboradorConfirm = document.querySelector('#modal_createColaboradorConfirm');
+        const modalCreateColaboradorConfirm = new bootstrap.Modal(modal_createColaboradorConfirm)
+        var spanIcon = document.querySelector('.span-create-colaborador-confirm-icon');
+        var spanText = document.querySelector('#spanCreateColaborador');
+        if (jsonResponse.status === "Colaborador apagado") {
+            spanIcon.innerHTML = '<i class="fa-regular fa-circle-check"></i>';
+            spanText.textContent = 'Employé supprimé avec succès';
+            spanIcon.style.color = "green";
+            setColaboradores();
+            modalCreateColaboradorConfirm.show();
+        }
+        if (jsonResponse.status === "Colaborador nao apagado") {
+            spanIcon.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
+            spanText.textContent = 'Erreur lors de la supprimé du employé, réessayez plus tard';
+            spanIcon.style.color = "red";
+            modalCreateColaboradorConfirm.show();
+        }
+    }).catch((error) => {
+        console.log(error);
+    });
+}
+
+///logout//
+function logout() {
+    const btn = document.querySelector('#btn_logout');
+    if (!btn) {
+        return false;
+    }
+    btn.addEventListener('click', () => {
+        debugger
+        let form = new FormData();
+        form.append('accao', 'setLogout');
+        fetch('../core/Request.php', {
+            method: 'POST',
+            body: form
+        }).then(() => {
+            window.location.href = 'index.php';
+        }).catch((error) => {
+            console.log(error);
+        });
+    });
+
+}
+
+//recovery pass //
+function setInputEmailRecovery() {
+    debugger
+    document.querySelector('input[name=recovery-pass]').value = document.querySelector('input[name=emailLogin]').value;
+}
+
+function sendEmail() {
+    const btn = document.querySelector('#btn-submitRecoveryPass');
+    if (!btn) {
+        return false;
+    }
+    btn.addEventListener('click', () => {
+        
+        let emailRecovery = document.querySelector('input[name=recovery-pass]');
+        let email_validatorRecovery = document.querySelector("#email_validatorRecovery");
+        if (emailRecovery.value.trim() === "") {
+            email_validatorRecovery.textContent = "Entrez l'e-mail";
+            incorrectInput(email_validatorRecovery.id, emailRecovery)
+            return false;
+        }
+        if (!testEmailRegex(emailRecovery.value)) {
+            email_validatorRecovery.textContent = "Entrer un email valide";
+            incorrectInput(email_validatorRecovery.id, emailRecovery)
+            return false;
+        }
+        let form = new FormData();
+        form.append('emailRecovey', emailRecovery.value)
+        form.append('accao', 'sendEmail');
+        fetch('../core/Request.php', {
+            method: 'POST',
+            body: form
+        }).then((response) => {
+            return response.json();
+        }).then((jsonResponse)=>{
+            console.log(jsonResponse);
+        }).catch((error) => {
+            console.log(error);
+        });
+    });
 }

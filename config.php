@@ -10,7 +10,7 @@ define('MYSQL_USER', 'root');
 define('MYSQL_PASS', '');
 define('MYSQL_CHARSET', 'utf8mb4');
 define('URL_BASE', 'localhost/gestaoclientes/public/');
-define('EMAIL_WEBMASTER', 'developerbrunobatista@gmail.com');
-define('PASS_WEB_MASTER', 'Eomunkp_2021');
+define('EMAIL_WEBMASTER', 'devbmatb@outlook.com');
+define('PASS_WEB_MASTER', 'Eomunkp_2022');
 setlocale(LC_TIME, 'Portuguese_Portugal');
 

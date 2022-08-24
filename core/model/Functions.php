@@ -2,9 +2,7 @@
 
 namespace core\model;
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
+
 
 class Functions
 {
@@ -84,43 +82,5 @@ class Functions
             return;
         }
     }
-    public static function enviarPearl($emailTo, $purl)
-    {
-        require '../vendor/autoload.php';
-        $mail = new PHPMailer(TRUE);
-        $rota = "http://localhost/gestaoclientes/public/?a=confirmar_conta&purl=" . $purl;
-
-        try {
-            //Server settings
-
-            $mail->SMTPDebug = SMTP::DEBUG_OFF;
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com';
-            $mail->SMTPAuth   = true;
-            $mail->CharSet    = 'UTF-8';
-            $mail->Username   = EMAIL_WEBMASTER;
-            $mail->Password   = PASS_WEB_MASTER;
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
-
-            //Recipients
-            $mail->setFrom(EMAIL_WEBMASTER, APP_NAME);
-            $mail->addAddress($emailTo);     //Add a recipient
-
-            //Attachments
-            // $mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
-            // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
-
-            //Content
-            $mail->isHTML(true);                                  //Set email format to HTML
-            $mail->Subject = 'Bem-vindo à Comunidade RPA';
-            $html = '<p>Obrigado pelo seu registo, para confirmar a sua ativação clique no link abaixo.</p>';
-            $html .= '<a href="' . $rota . '">Confirmar email</a>';
-            $mail->Body = $html;
-            $mail->send();
-            echo 1;
-        } catch (Exception $e) {
-            echo "Mensagem nao enviada, erro: {$mail->ErrorInfo}";
-        }
-    }
+   
 }

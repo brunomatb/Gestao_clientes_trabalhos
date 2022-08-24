@@ -199,11 +199,7 @@ a:focus {
     margin-right: 15px;
 }
 
-@media (max-width: 991.98px) {
-    #sidebar ul li a span {
-        display: block;
-    }
-}
+
 
 #sidebar ul li a:hover {
     color: #fff;
@@ -215,13 +211,17 @@ a:focus {
 
 }
 
+/*sidebar*/
 @media (max-width: 991.98px) {
+    #sidebar ul li a span {
+        display: block;
+    }
+
     #sidebar {
         min-width: 80px;
         max-width: 80px;
         text-align: center;
         margin-left: -80px !important;
-
     }
 
     #sidebar .div-user {
@@ -240,21 +240,10 @@ a:focus {
         margin-left: 0 !important;
 
     }
+
 }
 
-#sidebarCollapse {
-    background-color: #3953bb !important;
-    border-color: #3953bb !important;
-}
-
-#sidebarCollapse:hover {
-    background-color: #2587c5 !important;
-}
-
-#sidebarCollapse:focus {
-    box-shadow: none !important;
-}
-
+/*content*/
 @media (max-width: 991.98px) {
     #sidebarCollapse span {
         display: none;
@@ -277,9 +266,22 @@ a:focus {
     #content nav div {
         flex-direction: row-reverse;
     }
-
-
 }
+
+#sidebarCollapse {
+    background-color: #3953bb !important;
+    border-color: #3953bb !important;
+}
+
+#sidebarCollapse:hover {
+    background-color: #2587c5 !important;
+}
+
+#sidebarCollapse:focus {
+    box-shadow: none !important;
+}
+
+
 
 .circle-user {
     background: #ffffff;
@@ -496,13 +498,13 @@ input {
     background-color: #1b5579;
 }
 
-.div-login div div input {
+.div-login div div input, input[name=recovery-pass] {
     border: 2px solid rgb(107, 186, 236);
     border-radius: 5px;
     padding-left: 40px;
 }
 
-.div-login div div input:focus {
+.div-login div div input:focus, input[name=recovery-pass]:focus {
     outline: none;
     border: 2px solid #6bbaec;
     background-color: whitesmoke
@@ -742,7 +744,8 @@ input {
     color: #a3a3a3;
 }
 */
-.div-client-details-edit input {
+.div-client-details-edit input,
+.div-colaborador-details-edit input {
     outline: none;
     border: solid 2px #6bbaec;
     background-color: #f6f6f6;
@@ -761,7 +764,8 @@ input {
     background-color: #e9ecef;
 }
 
-.div-client-details-edit span {
+.div-client-details-edit span,
+.div-colaborador-details-edit span {
     margin-top: 15px;
     width: 100%;
 }
@@ -954,7 +958,7 @@ textarea[name=informacaoEditWork] {
 }
 
 .contact-box:hover {
-    background-color: #daf8ff !important;
+
     z-index: 99;
     box-shadow: 2px 1px 5px 1px rgb(171, 206, 251);
 }
@@ -999,7 +1003,105 @@ a {
     font-size: 23px;
     line-height: 70px;
     margin-top: 20px;
+    margin-bottom: 20px;
     text-align: center;
     width: 70px;
     box-shadow: 1px 1px 4px rgb(120, 120, 120);
+}
+
+.dropdown-opcoes-colaborador {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px
+}
+
+.botao-dropdown-opcoes-colaborador {
+    padding: 10px;
+    background: linear-gradient(0deg, rgba(149, 189, 236, 1) 0%, rgba(67, 167, 241, 1) 35%, rgba(149, 189, 236, 1) 100%);
+    border-radius: 15px;
+    color: white;
+    position: absolute;
+    height: 25px;
+    box-shadow: 1px 1px 5px 1px rgb(209, 209, 209);
+    transition: 0.3s;
+
+
+}
+
+.botao-dropdown-opcoes-colaborador:hover {
+    background: linear-gradient(0deg, rgba(77, 150, 235, 1) 0%, rgba(5, 118, 201, 1) 35%, rgba(77, 150, 235, 1) 100%);
+    box-shadow: 1px 1px 5px 1px rgb(175, 225, 255);
+}
+
+.botao-dropdown-opcoes-colaborador>svg {
+    display: block !important;
+    bottom: 11px;
+    position: relative !important;
+}
+
+.botao-new-colaborador {
+    color: rgba(5, 118, 201, 1);
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.botao-new-colaborador:hover {
+    color: rgb(81, 194, 255);
+    cursor: pointer;
+
+}
+
+/*recovery pass*/
+#btn_recoveryPass {
+    color: rgb(46, 46, 46);
+    font-weight: bolder;
+    transition: 0.2s;
+}
+
+#btn_recoveryPass:hover {
+    color: rgb(21, 237, 21);
+    cursor: pointer;
+}
+
+#btn_recoveryPass:active {
+    color: rgb(7, 121, 7);
+}
+
+#modalRecoverPass>div.modal-dialog>div.modal-content {
+    border-radius: 0px !important;
+    outline: none;
+    border: 0px;
+}
+
+#modalRecoverPass>div.modal-dialog>div.modal-content>div.modal-header {
+    background-color: #2fc7f8;
+    border-radius: 0px;
+    outline: none;
+
+}
+
+#modalRecoverPass>div.modal-dialog>div.modal-content>div.modal-header h4 {
+    color: white;
+    font-weight: bolder;
+}
+
+#modalRecoverPass>div.modal-dialog>div.modal-content>div.modal-header button {
+    background-color: white;
+}
+
+#modalRecoverPass>div.modal-dialog>div.modal-content>div.modal-body button {
+    border-radius: 20px !important;
+    border: solid 2px;
+}
+
+#modalRecoverPass>div.modal-dialog>div.modal-content>div.modal-body p {
+    color: rgb(85, 85, 85);
+}
+
+
+#modalRecoverPass>div.modal-dialog>div.modal-content>div.modal-body>.span-email-icon-recovery {
+    position: absolute;
+    top: 128px;
+    left: 30px;
+    font-size: 20px
 }

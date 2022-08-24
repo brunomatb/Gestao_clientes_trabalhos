@@ -74,6 +74,12 @@
                 <i class="fa-solid fa-trash-can"></i>
               </span> Clients éliminés</a>
           </li>
+          <li>
+            <a id="btn_logout" href="index.php?a=login">
+              <span>
+              <i class="fa-solid fa-right-from-bracket"></i>
+              </span > Logout</a>
+          </li>
         </ul>
 
         <div class="footer">

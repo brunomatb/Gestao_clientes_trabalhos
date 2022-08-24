@@ -6,7 +6,6 @@
         <tr>
             <th>Clients</th>
             <th>Chantiers</th>
-            <th>Informations</th>
             <th>Adresse</th>
             <th>Statut</th>
             <th>Salarié</th>

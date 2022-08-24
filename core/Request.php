@@ -92,5 +92,29 @@ if (isset($_POST['accao']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
             $objeto = new ClienteController();
             $objeto->recoveryClient();
             break;
+        case 'createColaborador':
+            $objeto = new ColaboradorController();
+            $objeto->createColaborador();
+            break;
+        case 'getColaborador':
+            $objeto = new ColaboradorController();
+            $objeto->getColaborador();
+            break;
+        case 'updateColaborador':
+            $objeto = new ColaboradorController();
+            $objeto->updateColaborador();
+            break;
+        case 'deleteColaborador':
+            $objeto = new ColaboradorController();
+            $objeto->deleteColaborador();
+            break;
+        case 'setLogout':
+            $objeto = new UserController();
+            $objeto->setLogout();
+            break;
+        case 'sendEmail':
+            $objeto = new UserController();
+            $objeto->sendEmailRecoveryPass();
+            break;
     }
 }

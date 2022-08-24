@@ -130,4 +130,27 @@ class DaoCrudModel
         }
         return $resultado;
     }
+
+    public function create($sql, $parametros = null)
+    {
+        $executar = null;
+        if (!preg_match("/^DROP EVENT/i", $sql)) {
+            return;
+        }
+        try {
+            $ligacao = new Conexao();
+            $executar = $ligacao->ligar()->prepare($sql);
+            if ($parametros != null) {
+                $executar->execute($parametros);
+            } else {
+                $executar->execute();
+            }
+        } catch (PDOException $e) {
+            echo $e;
+            return false;
+        } finally {
+            $ligacao->desligar();
+        }
+        return $executar;
+    }
 }

@@ -17,7 +17,7 @@ class DaoTrabalho
         $sql = "SELECT a.*, b.nome_colaborador, 
                 if(convert(datediff(CURRENT_TIMESTAMP(), a.data_estimada_inicio) / datediff(a.data_estimada_fim, a.data_estimada_inicio)*100, decimal) < 0 , 0, convert(datediff(CURRENT_TIMESTAMP(), a.data_estimada_inicio) / datediff(a.data_estimada_fim, a.data_estimada_inicio)*100, decimal)) as percentagem_Inicio_FimTrabalho
                 from gestao_clientes.trabalhos a
-                inner join gestao_clientes.colaborador b on a.id_colaborador = b.id_colaborador
+                left join gestao_clientes.colaborador b on a.id_colaborador = b.id_colaborador
                 where a.id_cliente = :id_cliente";
         $resultados =  $daoCrud->select(trim($sql), $parametros);
         $trabalhos = [];
@@ -52,7 +52,7 @@ class DaoTrabalho
                 if(if(convert(datediff(CURRENT_TIMESTAMP(), a.data_estimada_inicio) / datediff(a.data_estimada_fim, a.data_estimada_inicio)*100, decimal) < 0 , 0, convert(datediff(CURRENT_TIMESTAMP(), a.data_estimada_inicio) / datediff(a.data_estimada_fim, a.data_estimada_inicio)*100, decimal)) > 100, 100,
                 if(convert(datediff(CURRENT_TIMESTAMP(), a.data_estimada_inicio) / datediff(a.data_estimada_fim, a.data_estimada_inicio)*100, decimal) < 0 , 0, convert(datediff(CURRENT_TIMESTAMP(), a.data_estimada_inicio) / datediff(a.data_estimada_fim, a.data_estimada_inicio)*100, decimal)))  as percentagem_Inicio_FimTrabalho
                 from gestao_clientes.trabalhos a
-                inner join gestao_clientes.colaborador b on a.id_colaborador = b.id_colaborador
+                left join gestao_clientes.colaborador b on a.id_colaborador = b.id_colaborador
                 inner join gestao_clientes.clientes c on a.id_cliente = c.id_cliente ORDER BY c.nome_cliente;";
         $resultados =  $daoCrud->select(trim($sql));
         $trabalhos = [];
@@ -109,7 +109,7 @@ class DaoTrabalho
         $parametros = [':id_trabalho' => $trabalhoModel->getIdTrabalho(), ':trabalho_ativo' => 1];
         $sql = "SELECT a.*, b.nome_colaborador
                 from gestao_clientes.trabalhos a 
-                inner join gestao_clientes.colaborador b on b.id_colaborador = a.id_colaborador
+                left join gestao_clientes.colaborador b on b.id_colaborador = a.id_colaborador
                 where id_trabalho = :id_trabalho and trabalho_ativo = :trabalho_ativo";
 
         $resultados = $daoCrud->select($sql, $parametros);
@@ -179,4 +179,5 @@ class DaoTrabalho
         $resultado = $daoCrud->delete($sql, $parametros);
         return $resultado;
     }
+
 }

@@ -43,10 +43,38 @@ class DaoUser
         $parametros = [
             ':email' => $userModel->getEmail(),
             ':idUser' => $userModel->getIdUuser(),
-            ':pass' => $userModel->getPass()
+            ':pass' => $userModel->getPass(),
+            ':ativo' => 1
         ];
-        $resultado = $daoCrud->update("UPDATE users SET pass = :pass where id_user = :idUser and email = :email and ativo = 1", $parametros);
+        $resultado = $daoCrud->update("UPDATE users SET pass = :pass where id_user = :idUser and email = :email and ativo = :ativo", $parametros);
         return $resultado;
 
+    }
+
+    public function updatePurlUser(UserModel $userModel)
+    {
+        $daoCrud = new DaoCrudModel();
+        $parametros = [
+            ':id_user' => $userModel->getIdUuser(),
+            ':purl' => $userModel->getPurl(),
+            ':ativo' => 1,
+        ];
+        $resultado = $daoCrud->update("UPDATE users SET purl = :purl where id_user = :id_user and ativo = :ativo", $parametros);
+        if($resultado->rowCount() == 1){
+            $parametrosEvent = [
+                ':purl' => 0,
+                ':id_user' => $userModel->getIdUuser(),
+            ];
+            $event = "DROP EVENT IF EXISTS updateUserPurl".$userModel->getIdUuser().";
+                      CREATE EVENT updateUserPurl".$userModel->getIdUuser()."
+                      ON SCHEDULE AT NOW() + INTERVAL 30 MINUTE
+                      DO 
+                      BEGIN
+                      UPDATE users SET purl = :purl WHERE id_user = :id_user;
+                      END;";
+                      $resultado = $daoCrud->create($event, $parametrosEvent);
+
+        }
+        return $resultado;
     }
 }

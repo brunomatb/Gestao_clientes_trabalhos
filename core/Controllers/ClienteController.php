@@ -129,7 +129,7 @@ class ClienteController
             echo json_encode(Functions::ResultQuery(count($resultado)));
         }
     }
-    public function updateClienteDetails()
+    public function updateCliente()
     {
 
         if (!Functions::sessaoIniciada()) {
@@ -164,51 +164,28 @@ class ClienteController
             return;
         }
 
-        $updateCliente = [
-            'nome_cliente' => trim($_POST['nomeClienteUpdate']),
-            'email_cliente' => trim($_POST['emailClienteUpdate']),
-            'movel_cliente' => trim($_POST['movelClienteUpdate']),
-            'telefone_cliente' => trim($_POST['telefoneClienteUpdate']),
-            'morada_cliente' => trim($_POST['moradaClienteUpdate']),
-            'cidade_cliente' => trim($_POST['cidadeClienteUpdate'])
-        ];
-
-        $id = Functions::decodeB64($_POST['id']);
         $modelCliente = new ClientModel();
-        $modelCliente->setIdCliente($id);
         $daoCliente = new DaoCliente();
-        $resultado = $daoCliente->getClient($modelCliente);
+        $modelCliente->setIdCliente(Functions::decodeB64($_POST['id']));
+        $modelCliente->setNome(trim($_POST['nomeClienteUpdate']));
+        $modelCliente->setEmail(trim($_POST['emailClienteUpdate']));
+        $modelCliente->setMovel(trim($_POST['movelClienteUpdate']));
+        $modelCliente->setTelefone(trim($_POST['telefoneClienteUpdate']));
+        $modelCliente->setMorada(trim($_POST['moradaClienteUpdate']));
+        $modelCliente->setCidade(trim($_POST['cidadeClienteUpdate']));
+        $resultadoUpdate = $daoCliente->updateClient($modelCliente);
 
-        if (count($resultado) == 1) {
-
-            $cliente = [
-                'nome_cliente' => $resultado[0]->getNome(),
-                'email_cliente' => $resultado[0]->getEmail(),
-                'movel_cliente' => $resultado[0]->getMovel(),
-                'telefone_cliente' => $resultado[0]->getTelefone(),
-                'morada_cliente' => $resultado[0]->getMorada(),
-                'cidade_cliente' => $resultado[0]->getCidade(),
-            ];
+        if($resultadoUpdate == false){
+            echo json_encode(['status' => 'Erro na alteracao']);
+            return;
         }
-        if ($cliente == $updateCliente) {
+        if ($resultadoUpdate->rowCount() == 1) {
+            echo json_encode(['status' => 'Alteracao efetuada']);
+            return;
+        } else {
             echo json_encode(['status' => 'Nenhuma alteracao efetuada']);
             return;
         }
-
-        $modelCliente2 = new ClientModel();
-        $modelCliente2->setIdCliente($id);
-        $modelCliente2->setNome(trim($_POST['nomeClienteUpdate']));
-        $modelCliente2->setEmail(trim($_POST['emailClienteUpdate']));
-        $modelCliente2->setMovel(trim($_POST['movelClienteUpdate']));
-        $modelCliente2->setTelefone(trim($_POST['telefoneClienteUpdate']));
-        $modelCliente2->setMorada(trim($_POST['moradaClienteUpdate']));
-        $modelCliente2->setCidade(trim($_POST['cidadeClienteUpdate']));
-        $resultadoUpdate = $daoCliente->updateClient($modelCliente2);
-        if ($resultadoUpdate == 0 || $resultadoUpdate == false) {
-            echo json_encode(['status' => 'Erro na alteraçao']);
-            return;
-        }
-        echo json_encode(['status' => 'Alteracao efetuada']);
     }
 
     public function createNewClient()
@@ -254,12 +231,21 @@ class ClienteController
         $modelCliente->setTelefone(filter_input(INPUT_POST, 'telefoneNewCliente', FILTER_SANITIZE_NUMBER_INT));
         $modelCliente->setMorada(filter_input(INPUT_POST, 'moradaNewCliente', FILTER_SANITIZE_SPECIAL_CHARS));
         $modelCliente->setCidade(filter_input(INPUT_POST, 'cidadeNewCliente', FILTER_SANITIZE_SPECIAL_CHARS));
+
         $resultadoUpdate = $daoCliente->createNewClient($modelCliente);
-        if ($resultadoUpdate == 0 || $resultadoUpdate == false) {
+
+        if ($resultadoUpdate == false) {
             echo json_encode(['status' => 'Erro na criacao']);
             return;
         }
-        echo json_encode(['status' => 'Cliente criado']);
+        if($resultadoUpdate->rowCount() == 1){
+            echo json_encode(['status' => 'Cliente criado']);
+            return;
+        }else{
+            echo json_encode(['status' => 'Erro na criacao']);
+            return;
+        }
+        
     }
     public function softDeleteClient()
     {
@@ -396,7 +382,8 @@ class ClienteController
         Functions::layout(["header", "../deleted_client", "footer"], $valores);
     }
 
-    public function deleteClient(){
+    public function deleteClient()
+    {
         if (!Functions::sessaoIniciada()) {
             echo json_encode(['session' => false]);
             return;

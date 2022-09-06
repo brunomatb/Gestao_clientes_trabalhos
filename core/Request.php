@@ -40,9 +40,9 @@ if (isset($_POST['accao']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
             $objeto = new ClienteController();
             $objeto->getClientDetails();
             break;
-        case 'updateClienteDetails':
+        case 'updateCliente':
             $objeto = new ClienteController();
-            $objeto->updateClienteDetails();
+            $objeto->updateCliente();
             break;
         case 'createNewClient':
             $objeto = new ClienteController();

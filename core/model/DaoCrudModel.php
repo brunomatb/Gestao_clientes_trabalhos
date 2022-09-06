@@ -20,6 +20,9 @@ class DaoCrudModel
         }
         try {
             $ligacao = new Conexao();
+            if ($ligacao->ligar() == null) {
+                return false;
+            }
             $executar = $ligacao->ligar()->prepare($sql);
             if ($parametros != null) {
                 $executar->execute($parametros);
@@ -44,6 +47,9 @@ class DaoCrudModel
         }
         try {
             $ligacao = new Conexao();
+            if ($ligacao->ligar() == null) {
+                return false;
+            }
             $executar = $ligacao->ligar()->prepare($sql);
             if ($parametros != null) {
                 $executar->execute($parametros);
@@ -65,6 +71,9 @@ class DaoCrudModel
         }
         try {
             $ligacao = new Conexao();
+            if ($ligacao->ligar() == null) {
+                return false;
+            }
             $executar = $ligacao->ligar()->prepare($sql);
             if ($parametros != null) {
                 $executar->execute($parametros);
@@ -81,24 +90,28 @@ class DaoCrudModel
 
     public function insert($sql, $parametros = null)
     {
-        $resultado = null;
+        $executar = null;
         if (!preg_match("/^insert/i", $sql)) {
             return;
         }
         try {
             $ligacao = new Conexao();
+            if ($ligacao->ligar() == null) {
+                return false;
+            }
             $executar = $ligacao->ligar()->prepare($sql);
+
             if ($parametros != null) {
-                $resultado = $executar->execute($parametros);
+                $executar->execute($parametros);
             } else {
-                $resultado = $executar->execute();
+                $executar->execute();
             }
         } catch (PDOException $e) {
-            return false;
+            $executar =  false;
         } finally {
             $ligacao->desligar();
         }
-        return $resultado;
+        return $executar;
     }
     public function callSP($sql, $parametros = null)
     {
@@ -109,6 +122,9 @@ class DaoCrudModel
         $resultado = null;
         try {
             $ligacao = new Conexao();
+            if ($ligacao->ligar() == null) {
+                return false;
+            }
             $executar = $ligacao->ligar()->prepare($sql);
             if ($parametros != null) {
                 $resultado = $executar->execute($parametros);
@@ -139,6 +155,9 @@ class DaoCrudModel
         }
         try {
             $ligacao = new Conexao();
+            if ($ligacao->ligar() == null) {
+                return false;
+            }
             $executar = $ligacao->ligar()->prepare($sql);
             if ($parametros != null) {
                 $executar->execute($parametros);

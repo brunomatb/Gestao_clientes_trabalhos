@@ -25,7 +25,7 @@
                         <button type="submit" id="btn_login">Connexion&nbsp;<i class="fa-solid fa-right-to-bracket"></i></button>
                     </div>
                     <div class="btn-div-login">
-                        <span id="btn_recoveryPass" data-bs-toggle="modal" data-bs-target="#modalRecoverPass" onclick="setInputEmailRecovery()" >Mot de passe oublié?</span>
+                        <span id="btn_recoveryPass" data-bs-toggle="modal" data-bs-target="#modalRecoverPass" onclick="setInputEmailRecovery()">Mot de passe oublié?</span>
                         <span id="email_validator"></span>
                     </div>
                 </form>
@@ -43,11 +43,26 @@
                 <div class="modal-body">
                     <p>Bonjour à tous,</p>
                     <p>Si vous souhaitez réinitialiser votre mot de passe, veuillez confirmer l'e-mail et cliquer sur le bouton ci-dessous:</p>
-                    <input type="email" name="recovery-pass"  placeholder="email@email.com" onkeyup="onChangedInputs(this)">
+                    <input type="email" name="recovery-pass" placeholder="email@email.com" onkeyup="onChangedInputs(this)">
                     <span id="email_validatorRecovery" class="mb-4" style="display: table-row; height: 28px;"></span>
                     <span class="span-email-icon-recovery"><i class="fa-solid fa-at"></i></span>
                     <button type="button" id="btn-submitRecoveryPass" class="btn btn-outline-success mb-3">Réinitialiser passe</button>
                     <p>Un email sera envoyé pour réinitialiser le mot de passe. <br>Merci<br>L'administrateur.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal_confirmRecovery" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title title-modal-confirmRecovery" id="staticBackdropLabel">Réinitialiser le mot de passe <span class="span-icon"></span></h4>
+                </div>
+                <div class="modal-body">
+                    <p><span id="spanBodyConfirmRecovery"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Fermer</button>
                 </div>
             </div>
         </div>

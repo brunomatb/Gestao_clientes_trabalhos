@@ -13,7 +13,7 @@ class DaoCliente
     {
         $daoCrud = new DaoCrudModel();
         $parametros = [':cliente_ativo' => 1];
-        $resultados =  $daoCrud->select("SELECT * FROM clientes WHERE cliente_ativo = :cliente_ativo order by nome_cliente", $parametros);
+        $resultados =  $daoCrud->select("SELECT * FROM clientes WHERE cliente_ativo = :cliente_ativo order by data_criacao_cliente desc", $parametros);
 
         $cliente = [];
         foreach ($resultados as $v) {
@@ -123,6 +123,7 @@ class DaoCliente
 
         $sql = "INSERT INTO clientes (nome_cliente, email_cliente, movel_cliente, telefone_cliente, morada_cliente, cidade_cliente) VALUES (:nome_cliente, :email_cliente, :movel_cliente, :telefone_cliente, :morada_cliente, :cidade_cliente)";
         $resultado = $daoCrud->insert($sql, $parametros);
+
         return $resultado;
     }
     public function softDeleteClient(ClientModel $clienteModel)

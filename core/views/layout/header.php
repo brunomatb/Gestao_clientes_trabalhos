@@ -18,7 +18,10 @@
   <script src="../public/assets/js/buttons.html5.min.js"></script>
   <script src="../public/assets/js/buttons.print.min.js"></script>
   <script src="../public/assets/js/main.js"></script>
-  <script src="../public/assets/js/func.js"></script>
+  <script src="../public/assets/js/cliente.js"></script>
+  <script src="../public/assets/js/colaborador.js"></script>
+  <script src="../public/assets/js/user.js"></script>
+  <script src="../public/assets/js/work.js"></script>
   <link rel="stylesheet" href="../public/assets/css/jquery.datetimepicker.min.css" />
   <link rel="stylesheet" href="../public/assets/css/bootstrap.min.css" />
   <link rel="stylesheet" href="../public/assets/css/fontawesome_all.min.css" />
@@ -122,4 +125,5 @@
 
           </div>
         </nav>
+        <div style="position: fixed; z-index: 99; left: 50%; top: 50%; transform: translate(-50%, -50%);" class="loading-gif"></div>
       <?php } ?>
